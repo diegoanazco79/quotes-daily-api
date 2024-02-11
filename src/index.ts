@@ -1,16 +1,20 @@
-import express, { Request, Response } from 'express'
+import "dotenv/config";
+import express from "express";
+import cors from "cors";
 
-const app = express()
-const port = process.env.PORT || 8080
+import { router as QuoteRouter } from "./routes/quote";
 
-app.get('/', (_req: Request, res: Response) => {
-  return res.send('Express Typescript on Vercel')
-})
+import config from "./config/config";
+import dbConnect from "./config/mongo";
 
-app.get('/ping', (_req: Request, res: Response) => {
-  return res.send('pong 🏓')
-})
+const PORT = config.port || 3001;
 
-app.listen(port, () => {
-  return console.log(`Server is listening on ${port}`)
-})
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+app.use(QuoteRouter);
+
+dbConnect().then(() => console.log("MongoDB connected"));
+
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
